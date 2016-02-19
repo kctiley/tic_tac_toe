@@ -22,7 +22,7 @@ var displayBoard = function(){
 
 var updateBoard = function(){
   if(gameOver == true){
-    console.log("The winner is...")
+    console.log("gameover in updateBoard...")
   }
   else{
     for (var i = 0; i < 3; i++){
@@ -93,60 +93,68 @@ var checkForAvailableWinPosition = function(player){
   else {
     mkr = " X "
   }
-  console.log(mkr)
   for (var i = 0; i < 3; i++){
     for (var j = 0; j < board[i].length; j++){
       if(board[i][j - 1] && board[i][j + 1]){
         if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j - 1].marker == "[ ]"){
-          availableWinPositions.push(board[i][j - 1].position)
+          availableWinPositions.push({position: board[i][j - 1].position, player: player})
         }
       }
       if(board[i][j + 1] && board[i][j + 2]){
         if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j + 2].marker == "[ ]"){
-          availableWinPositions.push(board[i][j + 2].position)
+          availableWinPositions.push({position:board[i][j + 2].position, player: player})
         }
       }
       if(board[i][j - 1] && board[i][j + 1]){
         if (board[i][j - 1].marker == mkr && board[i][j + 1].marker == mkr && board[i][j].marker == "[ ]"){
-          availableWinPositions.push(board[i][j].position)
+          availableWinPositions.push({position:board[i][j].position, player: player})
         }
       }
-
+      if(board[i - 1] && board[i + 1]){
+        if (board[i -1][j].marker == mkr && board[i + 1][j].marker == mkr && board[i][j].marker == "[ ]"){
+          availableWinPositions.push({position:board[i][j].position, player: player})
+        }
+      }
+      if(board[i + 1] && board[i + 2]){
+        if (board[i][j].marker == mkr && board[i + 1][j].marker == mkr && board[i + 2][j].marker == "[ ]"){
+          availableWinPositions.push({position:board[i + 2][j].position, player: player})
+        }
+      }
+      if(board[i - 1] && board[i + 1]){
+        if (board[i][j].marker == mkr && board[i + 1][j].marker == mkr && board[i - 1][j].marker == "[ ]"){
+          availableWinPositions.push({position:board[i - 1][j].position, player: player})
+        }
+      }
     }
   }
-  console.log(availableWinPositions)
 }
 
 var upDateAll = function(position, player){
-  movesPlayed++
-  if(movesPlayed == 9 || gameOver == true){
-    updateLastMoveData(position, player)
-    console.log("lastMoveData", lastMoveData)
-    console.log("Updating board...")
-    updateBoard()
-    console.log("Displaying board...")
+  movesPlayed++;
+  updateLastMoveData(position, player)
+  updateBoard();
+  updateAvailablePositions();
+
+  if(gameOver == true && winner == "Computer"){
+    console.log("GAMEOVER...Computer wins!")
+  }
+  else if(availablePositions.length == 0 ){
     displayBoard()
-    updateAvailablePositions()
-    console.log("availablePositions", availablePositions)
     console.log("GAMEOVER...all positions filled")
   }
   else {
-    updateLastMoveData(position, player)
-    console.log("lastMoveData", lastMoveData)
-    console.log("Updating board...")
-    updateBoard()
-    console.log("Displaying board...")
+    console.log(player + " chooses " + position + ".")
     displayBoard()
-    updateAvailablePositions()
     console.log("availablePositions", availablePositions)
     updateCornerChoices()
-    console.log("cornerChoices", cornerChoices)
+    // console.log("cornerChoices", cornerChoices)
     updateSideChoices()
-    console.log("sideChoices", sideChoices)
+    // console.log("sideChoices", sideChoices)
     updateCenterChoice()
-    console.log("centerChoice", centerChoice)
+    // console.log("centerChoice", centerChoice)
     checkForAvailableWinPosition(player)
-    console.log("availableWinPositions", availableWinPositions)
+    console.log("availableWinPositions", availableWinPositions.length, availableWinPositions)
+    console.log("Move " + (movesPlayed +1))
     nextPlayerGo();
   }
 }
@@ -158,9 +166,24 @@ var computerSelectPosition = function(){
     
   }
   else{
-    if(availableWinPositions.length){
-      var selected = availableWinPositions[0]
+    if(availableWinPositions.length > 0){
+      var winPositionSelected = false;
+      for (var w = 0; w < availableWinPositions.length; w++){
+        if(availableWinPositions[w].player == "Computer"){
+          winPositionSelected = true;
+          selected = availableWinPositions[w].position;
+          gameOver = true;
+          winner = "Computer";
+        }
+        else{
+          if(winPositionSelected == false){
+            selected = availableWinPositions[w].position
+            console.log("**check for '" + selected + "' to be removed from options and availableWinPositions")
+          }
+        }
+      }
       upDateAll(selected, "Computer")
+
     }
 
     else if(cornerChoices.length > 0){
@@ -195,34 +218,35 @@ var userSelectPosition = function(){
       for (var j = 0; j < board[i].length; j++){
         if (board[i][j].position == selected && board[i][j].marker == "[ ]"){
           positionAvailable = true;
-          lastMoveData.player = "User";
-          lastMoveData.position = selected;
           upDateAll(selected, "User")
         }
       }
     }
     if (positionAvailable == false){
       console.log("position invalid or unavailable");
-      nextPlayerGo();
+      userSelectPosition();
     }
   }
 }
 
 var nextPlayerGo = function(){
   if(lastMoveData.player == "User"){
+    console.log("Computer goes....")
     computerSelectPosition()
   }
   else{
+    console.log("User goes....")
     userSelectPosition()
   }
 }
 
 var lastMoveData = {};
 var gameOver = false;
+var winner = "";
 
 
 // Begin game play
 displayBoard()
-console.log('Computer will move first...')
+console.log('Computer will move first...Move 1')
 computerSelectPosition()
 
