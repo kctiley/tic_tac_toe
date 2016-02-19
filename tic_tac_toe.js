@@ -117,6 +117,44 @@ var checkForAvailableWinPosition = function(){
           availableWinPositions.push({position:board[i - 1][j].position, player: player})
         }
       }
+
+      // diagonal detection
+      // start top left  mid-center
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i - 1][j - 1].marker == mkr && board[i + 1][j + 1].marker == mkr && board[i][j].marker == "[ ]"){
+          availableWinPositions.push({position:board[i][j].position, player: player})
+        }
+      }
+      // start top left  top-left
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i][j].marker == mkr && board[i + 1][j + 1].marker == mkr && board[i - 1][j - 1].marker == "[ ]"){
+          availableWinPositions.push({position:board[i - 1][j - 1].position, player: player})
+        }
+      }
+      // start top left  bot-right
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i - 1][j - 1].marker == mkr && board[i][j].marker == mkr && board[i + 1][j + 1].marker == "[ ]"){
+          availableWinPositions.push({position:board[i + 1][j + 1].position, player: player})
+        }
+      }
+      // start top right  mid-center
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i - 1][j + 1].marker == mkr && board[i + 1][j - 1].marker == mkr && board[i][j].marker == "[ ]"){
+          availableWinPositions.push({position:board[i][j].position, player: player})
+        }
+      }
+      // start top right  top-right
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i][j].marker == mkr && board[i + 1][j - 1].marker == mkr && board[i - 1][j + 1].marker == "[ ]"){
+          availableWinPositions.push({position:board[i - 1][j + 1].position, player: player})
+        }
+      }
+      // start top right  bot-left
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i][j].marker == mkr && board[i - 1][j + 1].marker == mkr && board[i + 1][j - 1].marker == "[ ]"){
+          availableWinPositions.push({position:board[i + 1][j - 1].position, player: player})
+        }
+      }
     }
   }
 
@@ -129,6 +167,7 @@ var checkForAvailableWinPosition = function(){
     var mkr = " O ";
     var player = "User"
     for (var j = 0; j < board[i].length; j++){
+      // horizontal detection
       if(board[i][j - 1] && board[i][j + 1]){
         if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j - 1].marker == "[ ]"){
           availableWinPositions.push({position: board[i][j - 1].position, player: player})
@@ -144,19 +183,60 @@ var checkForAvailableWinPosition = function(){
           availableWinPositions.push({position:board[i][j].position, player: player})
         }
       }
+      // vertical detection
+      //vert-mid
       if(board[i - 1] && board[i + 1]){
         if (board[i -1][j].marker == mkr && board[i + 1][j].marker == mkr && board[i][j].marker == "[ ]"){
           availableWinPositions.push({position:board[i][j].position, player: player})
         }
       }
+      //vert-bot
       if(board[i + 1] && board[i + 2]){
         if (board[i][j].marker == mkr && board[i + 1][j].marker == mkr && board[i + 2][j].marker == "[ ]"){
           availableWinPositions.push({position:board[i + 2][j].position, player: player})
         }
       }
+      //vert-top
       if(board[i - 1] && board[i + 1]){
         if (board[i][j].marker == mkr && board[i + 1][j].marker == mkr && board[i - 1][j].marker == "[ ]"){
           availableWinPositions.push({position:board[i - 1][j].position, player: player})
+        }
+      }
+      // diagonal detection
+      // start top left  mid-center
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i - 1][j - 1].marker == mkr && board[i + 1][j + 1].marker == mkr && board[i][j].marker == "[ ]"){
+          availableWinPositions.push({position:board[i][j].position, player: player})
+        }
+      }
+      // start top left  top-left
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i][j].marker == mkr && board[i + 1][j + 1].marker == mkr && board[i - 1][j - 1].marker == "[ ]"){
+          availableWinPositions.push({position:board[i - 1][j - 1].position, player: player})
+        }
+      }
+      // start top left  bot-right
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i - 1][j - 1].marker == mkr && board[i][j].marker == mkr && board[i + 1][j + 1].marker == "[ ]"){
+          availableWinPositions.push({position:board[i + 1][j + 1].position, player: player})
+        }
+      }
+      // start top right  mid-center
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i - 1][j + 1].marker == mkr && board[i + 1][j - 1].marker == mkr && board[i][j].marker == "[ ]"){
+          availableWinPositions.push({position:board[i][j].position, player: player})
+        }
+      }
+      // start top right  top-right
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i][j].marker == mkr && board[i + 1][j - 1].marker == mkr && board[i - 1][j + 1].marker == "[ ]"){
+          availableWinPositions.push({position:board[i - 1][j + 1].position, player: player})
+        }
+      }
+      // start top right  bot-left
+      if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+        if (board[i][j].marker == mkr && board[i - 1][j + 1].marker == mkr && board[i + 1][j - 1].marker == "[ ]"){
+          availableWinPositions.push({position:board[i + 1][j - 1].position, player: player})
         }
       }
     }
