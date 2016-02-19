@@ -85,7 +85,7 @@ var updateLastMoveData = function(position, player){
 
 var availableWinPositions = [];
 var checkForAvailableWinPosition = function(player){
-
+  availableWinPositions = [];
   var mkr;
   if(player == "User"){
     mkr = " O ";
@@ -106,6 +106,12 @@ var checkForAvailableWinPosition = function(player){
           availableWinPositions.push(board[i][j + 2].position)
         }
       }
+      if(board[i][j - 1] && board[i][j + 1]){
+        if (board[i][j - 1].marker == mkr && board[i][j + 1].marker == mkr && board[i][j].marker == "[ ]"){
+          availableWinPositions.push(board[i][j].position)
+        }
+      }
+
     }
   }
   console.log(availableWinPositions)
@@ -152,8 +158,12 @@ var computerSelectPosition = function(){
     
   }
   else{
+    if(availableWinPositions.length){
+      var selected = availableWinPositions[0]
+      upDateAll(selected, "Computer")
+    }
 
-    if(cornerChoices.length > 0){
+    else if(cornerChoices.length > 0){
       var selected = cornerChoices[Math.floor(Math.random() * (cornerChoices.length))]
       upDateAll(selected, "Computer")
     }
