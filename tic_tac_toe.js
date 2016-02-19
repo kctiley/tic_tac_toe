@@ -177,7 +177,7 @@ var upDateAll = function(position, player){
     console.log("Gameover...COMPUTER wins!")
   }
   else if(availablePositions.length == 0 ){
-    console.log("Gameover...all positions filled.. TIE?")
+    console.log("Gameover...all positions filled.. TIE")
   }
   else {
     console.log("availablePositions", availablePositions)
@@ -196,8 +196,13 @@ var upDateAll = function(position, player){
 
 var computerSelectPosition = function(){
   if(movesPlayed < 3){
-    var selected = cornerChoices[Math.floor(Math.random() * (cornerChoices.length))]
-    upDateAll(selected, "Computer");
+    if(movesPlayed == 2 && centerChoice.length > 0){
+      upDateAll(centerChoice[0], "Computer")
+    }
+    else {
+      var selected = cornerChoices[Math.floor(Math.random() * (cornerChoices.length))]
+      upDateAll(selected, "Computer");
+    } 
     
   }
   else{
@@ -214,7 +219,7 @@ var computerSelectPosition = function(){
         else{
           if(winPositionSelected == false){
             selected = availableWinPositions[w].position
-            console.log("**check for '" + selected + "' to be removed from options and availableWinPositions")
+            console.log("**User win move detected: " + selected)
           }
         }
       }
