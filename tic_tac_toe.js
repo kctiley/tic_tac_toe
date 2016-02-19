@@ -83,35 +83,76 @@ var updateLastMoveData = function(position, player){
   lastMoveData.player = player;
 }
 
+var availableWinPositions = [];
+var checkForAvailableWinPosition = function(player){
+
+  var mkr;
+  if(player == "User"){
+    mkr = " O ";
+  }
+  else {
+    mkr = " X "
+  }
+  console.log(mkr)
+  for (var i = 0; i < 3; i++){
+    for (var j = 0; j < board[i].length; j++){
+      if(board[i][j - 1] && board[i][j + 1]){
+        if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j - 1].marker == "[ ]"){
+          availableWinPositions.push(board[i][j - 1].position)
+        }
+      }
+      if(board[i][j + 1] && board[i][j + 2]){
+        if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j + 2].marker == "[ ]"){
+          availableWinPositions.push(board[i][j + 2].position)
+        }
+      }
+    }
+  }
+  console.log(availableWinPositions)
+}
+
 var upDateAll = function(position, player){
   movesPlayed++
-  if(movesPlayed == 9){
-    return "game over...tie"
+  if(movesPlayed == 9 || gameOver == true){
+    updateLastMoveData(position, player)
+    console.log("lastMoveData", lastMoveData)
+    console.log("Updating board...")
+    updateBoard()
+    console.log("Displaying board...")
+    displayBoard()
+    updateAvailablePositions()
+    console.log("availablePositions", availablePositions)
+    console.log("GAMEOVER...all positions filled")
   }
-  updateLastMoveData(position, player)
-  console.log("lastMoveData", lastMoveData)
-  console.log("Updating board...")
-  updateBoard()
-  console.log("Displaying board...")
-  displayBoard()
-  updateAvailablePositions()
-  console.log("availablePositions", availablePositions)
-  updateCornerChoices()
-  console.log("cornerChoices", cornerChoices)
-  updateSideChoices()
-  console.log("sideChoices", sideChoices)
-  updateCenterChoice()
-  console.log("centerChoice", centerChoice)
-  nextPlayerGo();
+  else {
+    updateLastMoveData(position, player)
+    console.log("lastMoveData", lastMoveData)
+    console.log("Updating board...")
+    updateBoard()
+    console.log("Displaying board...")
+    displayBoard()
+    updateAvailablePositions()
+    console.log("availablePositions", availablePositions)
+    updateCornerChoices()
+    console.log("cornerChoices", cornerChoices)
+    updateSideChoices()
+    console.log("sideChoices", sideChoices)
+    updateCenterChoice()
+    console.log("centerChoice", centerChoice)
+    checkForAvailableWinPosition(player)
+    console.log("availableWinPositions", availableWinPositions)
+    nextPlayerGo();
+  }
 }
 
 var computerSelectPosition = function(){
-  if(movesPlayed == 0){
+  if(movesPlayed < 3){
     var selected = cornerChoices[Math.floor(Math.random() * (cornerChoices.length))]
     upDateAll(selected, "Computer");
     
   }
   else{
+
     if(cornerChoices.length > 0){
       var selected = cornerChoices[Math.floor(Math.random() * (cornerChoices.length))]
       upDateAll(selected, "Computer")
@@ -132,23 +173,28 @@ var computerSelectPosition = function(){
 }
 
 var userSelectPosition = function(){
-  var selected = prompt("Enter a move position");
+  if(movesPlayed > 8){ 
+    console.log("in userSelectPosition...gameover");
 
-  var positionAvailable = false
-  for (var i = 0; i < 3; i++){
-    for (var j = 0; j < board[i].length; j++){
-      if (board[i][j].position == selected && board[i][j].marker == "[ ]"){
-        positionAvailable = true;
-        lastMoveData.player = "User";
-        lastMoveData.position = selected;
-        upDateAll(selected, "User")
-        nextPlayerGo()
+  }
+  else{
+    var selected = prompt("Enter a move position");
+
+    var positionAvailable = false
+    for (var i = 0; i < 3; i++){
+      for (var j = 0; j < board[i].length; j++){
+        if (board[i][j].position == selected && board[i][j].marker == "[ ]"){
+          positionAvailable = true;
+          lastMoveData.player = "User";
+          lastMoveData.position = selected;
+          upDateAll(selected, "User")
+        }
       }
     }
-  }
-  if (positionAvailable == false){
-    console.log("position invalid or unavailable");
-    nextPlayerGo();
+    if (positionAvailable == false){
+      console.log("position invalid or unavailable");
+      nextPlayerGo();
+    }
   }
 }
 
