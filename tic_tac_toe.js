@@ -277,7 +277,33 @@ var upDateAll = function(position, player){
 var computerSelectPosition = function(){
   if(movesPlayed < 3){
     if(movesPlayed == 2 && centerChoice.length > 0){
-      upDateAll(centerChoice[0], "Computer")
+      if(board[0][0].marker == " X " && board[0][1].marker == " O "){
+        upDateAll("bot-left", "Computer")
+      }
+      else if(board[0][0].marker == " X " && board[1][0].marker == " O "){
+        upDateAll("top-right", "Computer")
+      }
+      else if(board[0][2].marker == " X " && board[0][1].marker == " O "){
+        upDateAll("bot-right", "Computer")
+      }
+      else if(board[0][2].marker == " X " && board[1][2].marker == " O "){
+        upDateAll("top-left", "Computer")
+      }
+      else if(board[2][0].marker == " X " && board[1][0].marker == " O "){
+        upDateAll("bot-right", "Computer")
+      }
+      else if(board[2][0].marker == " X " && board[2][1].marker == " O "){
+        upDateAll("top-left", "Computer")
+      }
+      else if(board[2][2].marker == " X " && board[2][1].marker == " O "){
+        upDateAll("top-right", "Computer")
+      }
+      else if(board[2][2].marker == " X " && board[1][2].marker == " O "){
+        upDateAll("bot-left", "Computer")
+      }
+      else{
+        upDateAll(centerChoice[0], "Computer")
+      }
     }
     else {
       var selected = cornerChoices[Math.floor(Math.random() * (cornerChoices.length))]
@@ -294,7 +320,7 @@ var computerSelectPosition = function(){
           selected = availableWinPositions[w].position;
           gameOver = true;
           winner = "Computer";
-          alert('winning position found by computer')
+          alert('..winning position found by Computer')
         }
         else{
           if(winPositionSelected == false){
