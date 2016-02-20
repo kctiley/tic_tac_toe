@@ -83,24 +83,44 @@ var computerMove = function(){
     var move1 = moveLog[moveLog.length - 2]
     var move2 = moveLog[moveLog.length - 1]
     // Scenario move O moved to adjacent side of X
-    // Scenario top-left then top-center
-    if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 0 && move2.coords.j - 1 == 0){
+    // Scenario 1st top-left 2nd top-center
+    if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 0 && move2.coords.j == 1){
       moveData = board[2][0];
       updateThis();
     }
-    // Scenario bot-left then top-center
-    else if(move1.coords.i == 2 && move2.coords.i == 2 && move1.coords.j == 0 && move2.coords.j - 1 == 0){
-      moveData = board[0][0];
+    // Scenario 1st top-left 2nd mid-left
+    else if(move1.coords.i == 0 && move2.coords.i == 1 && move1.coords.j == 0 && move2.coords.j == 0){
+      moveData = board[0][2];
       updateThis();
     }
-    // Scenario top-right then top-center
-    else if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 2 && move2.coords.j + 1 == 2){
+    // Scenario 1st bot-left 2nd bot-center
+    else if(move1.coords.i == 2 && move2.coords.i  == 2 && move1.coords.j == 0 && move2.coords.j == 1){
+      moveData = board[1][0];
+      updateThis();
+    }
+    // Scenario 1st bot-left 2nd mid-left
+    else if(move1.coords.i == 2 && move2.coords.i  == 1 && move1.coords.j == 0 && move2.coords.j == 0){
       moveData = board[2][2];
       updateThis();
     }
-    // Scenario bot-right then top-center
-    else if(move1.coords.i == 2 && move2.coords.i == 2 && move1.coords.j == 2 && move2.coords.j + 1 == 2){
+    // Scenario 1st top-right 2nd top-center
+    else if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 2 && move2.coords.j == 1){
+      moveData = board[2][2];
+      updateThis();
+    }
+    // Scenario 1st top-right 2nd mid-right
+    else if(move1.coords.i == 0 && move2.coords.i == 1 && move1.coords.j == 2 && move2.coords.j == 2){
+      moveData = board[0][0];
+      updateThis();
+    }
+    // Scenario 1st bot-right 2nd top-center
+    else if(move1.coords.i == 2 && move2.coords.i == 2 && move1.coords.j == 2 && move2.coords.j == 1){
       moveData = board[0][2];
+      updateThis();
+    }
+    // Scenario 1st bot-right 2nd mid-right
+    else if(move1.coords.i == 2 && move2.coords.i == 1 && move1.coords.j == 2 && move2.coords.j == 2){
+      moveData = board[0][0];
       updateThis();
     }
     // 2nd move was not a side move
