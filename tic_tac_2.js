@@ -90,7 +90,7 @@ var userMove = function(){
 
 // Updates
 var updateMoveLog = function(selected, player){
-  lastPlayData.selected = selected;
+  lastPlayData.move = selected;
   lastPlayData.player = player;
   moveLog.push(lastPlayData);
 }
@@ -99,7 +99,7 @@ var updateAll = function(position, player){
   updateMoveLog(position, player);
   console.log("\n");
   console.log("Begin move #",moveLog.length);
-  console.log(moveLog[moveLog.length - 1].player + " chose " + moveLog[moveLog.length - 1].position);
+  console.log(moveLog[moveLog.length - 1].player + " chose " + moveLog[moveLog.length - 1].move.position);
   console.log("Last play data: ",lastPlayData);
   updateChoices();
   showOptions();
