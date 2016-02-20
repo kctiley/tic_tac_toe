@@ -95,7 +95,7 @@ var computerMove = function(){
     }
     // Scenario 1st bot-left 2nd bot-center
     else if(move1.coords.i == 2 && move2.coords.i  == 2 && move1.coords.j == 0 && move2.coords.j == 1){
-      moveData = board[1][0];
+      moveData = board[0][0];
       updateThis();
     }
     // Scenario 1st bot-left 2nd mid-left
@@ -113,14 +113,14 @@ var computerMove = function(){
       moveData = board[0][0];
       updateThis();
     }
-    // Scenario 1st bot-right 2nd top-center
+    // Scenario 1st bot-right 2nd bot-center
     else if(move1.coords.i == 2 && move2.coords.i == 2 && move1.coords.j == 2 && move2.coords.j == 1){
       moveData = board[0][2];
       updateThis();
     }
     // Scenario 1st bot-right 2nd mid-right
     else if(move1.coords.i == 2 && move2.coords.i == 1 && move1.coords.j == 2 && move2.coords.j == 2){
-      moveData = board[0][0];
+      moveData = board[2][0];
       updateThis();
     }
     // 2nd move was not a side move
