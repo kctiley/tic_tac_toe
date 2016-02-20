@@ -62,51 +62,109 @@ var showOptions = function(){
 
 // Move Logic
 var nextPlayerGo =function(player){
-  player == "Computer" ? userMove() : computerMove;
+  player == "Computer" ? userMove() : computerMove();
 }
 
 var computerMove = function(){
-  // Scenario 1st move go to any corner
-  var selected = cornerChoices[Math.floor(Math.random()* corners.length)];
-  selected.marker = " X ";
-  updateAll(selected,"Computer")
+  var updateThis = function(){
+    // Submit choice
+    moveData.marker = " X ";
+    moveData.player = "Computer";
+    updateAll(moveData)
+  }
+  var moveData ;
+  // Scenario 1st move: Choose a corner
+  if(moveLog.length < 1){
+    moveData = cornerChoices[Math.floor(Math.random()* corners.length)];
+    updateThis();
+  }
+  // Scenario 3rd move: 
+  if(moveLog.length == 2){
+    var move1 = moveLog[moveLog.length - 2]
+    var move2 = moveLog[moveLog.length - 1]
+    // Scenario move O moved to adjacent side of X
+    // Scenario top-left then top-center
+    if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 0 && move2.coords.j - 1 == 0){
+      moveData = board[2][0];
+      updateThis();
+    }
+    // Scenario bot-left then top-center
+    else if(move1.coords.i == 2 && move2.coords.i == 2 && move1.coords.j == 0 && move2.coords.j - 1 == 0){
+      moveData = board[0][0];
+      updateThis();
+    }
+    // Scenario top-right then top-center
+    else if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 2 && move2.coords.j + 1 == 2){
+      moveData = board[2][2];
+      updateThis();
+    }
+    // Scenario bot-right then top-center
+    else if(move1.coords.i == 2 && move2.coords.i == 2 && move1.coords.j == 2 && move2.coords.j + 1 == 2){
+      moveData = board[0][2];
+      updateThis();
+    }
+    // 2nd move was not a side move
+    else {
+      console.log("2nd move was not a side move")
+    }
+  }
+  // Scenario 5th move:
+  console.log("5th move not coded")
+
+
+  
 }
 
 var userMove = function(){
-  var selected;
+  var moveData;
   var validMove = false;
   var position = prompt('Enter a position for your move');
+
   for (var i = 0; i < 3; i++){
     for (var j = 0; j < 3; j++){
       if (board[i][j].marker == "[ ]" && board[i][j].position == position){
-        selected = board[i][j];
-        selected.marker = " O ";
+        moveData = board[i][j];
+        moveData.marker = " O ";
+        moveData.player = "User";
+        moveData.coords = {i : "", j : ""};
+        moveData.coords.i = i;
+        moveData.coords.j = j;
         validMove = true;
       }
     }
   }
-  validMove == true ? updateAll(selected, "User") : console.log("INVALID SELECTION")
+  validMove == true ? updateAll(moveData) : console.log("INVALID SELECTION")
 }
 
 // Updates
-var updateMoveLog = function(selected, player){
-  lastPlayData.move = selected;
-  lastPlayData.player = player;
+var updateMoveLog = function(moveData){
+  lastPlayData = moveData;
+  if(!lastPlayData.coords){
+    lastPlayData.coords = {i : "", j : ""};
+    for (var i = 0; i < 3; i++){
+      for (var j = 0; j < 3; j++){
+        if (moveData.position == board[i][j].position){
+          lastPlayData.coords.i = i;
+          lastPlayData.coords.j = j;
+        }
+      }
+    }
+  }
   moveLog.push(lastPlayData);
 }
 
-var updateAll = function(position, player){
-  updateMoveLog(position, player);
+var updateAll = function(moveData){
+  updateMoveLog(moveData);
   console.log("\n");
-  console.log("Begin move #",moveLog.length);
-  console.log(moveLog[moveLog.length - 1].player + " chose " + moveLog[moveLog.length - 1].move.position);
-  console.log("Last play data: ",lastPlayData);
+  console.log("Begin move #", moveLog.length);
+  console.log(moveLog[moveLog.length - 1].player + " chose " + moveLog[moveLog.length - 1].position);
+  console.log("Last play data: ", lastPlayData);
   updateChoices();
   showOptions();
   console.log("\n");
   showBoard();
 
-  allOptions.length > 0 ? nextPlayerGo(player) : console.log("Gameover...no more options")
+  allOptions.length > 0 ? nextPlayerGo(moveData.player) : console.log("Gameover...no more options")
 }
 
 
