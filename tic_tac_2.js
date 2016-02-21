@@ -92,6 +92,26 @@ var computerMove = function(){
         return result;
       }
     }
+    // O moves center
+    if(move2.coords.i == 1 && move2.coords.j == 1 ){
+      // 1st top-left
+      if(move1.coords.i == 0 && move1.coords.j == 0){
+        moveData = board[2][2];
+      }
+      // 1st top-right
+      if(move1.coords.i == 0 && move1.coords.j == 2){
+        moveData = board[2][0];
+      }
+      // 1st bot-right
+      if(move1.coords.i == 2 && move1.coords.j == 2){
+        moveData = board[0][0];
+      }
+      // 1st bot-left
+      if(move1.coords.i == 2 && move1.coords.j == 0){
+        moveData = board[0][2];
+      }
+      updateThis();
+    }
     // Scenario move O moved to adjacent side of X
     // Scenario 1st top-left 2nd top-center
     if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 0 && move2.coords.j == 1){
