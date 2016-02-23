@@ -5,6 +5,10 @@ var sideChoices = [];
 var centerChoice = [];
 var lastPlayData ={};
 var moveLog = [];
+var computerWon = false;
+var secondMove = "";
+var availableWinPositions = [];
+var checkForAvailableWinPosition;
 
 // Board 
 var board = [
@@ -13,30 +17,6 @@ var board = [
   [{position:"bot-left", marker:"[ ]", category: "corner"},{position:"bot-center", marker:"[ ]", category: "side"},{position:"bot-right", marker:"[ ]", category: "corner"}]
 ]
 
-var updateChoices = function(){
-  allOptions = [];
-  cornerChoices = [];
-  sideChoices = [];
-  centerChoice = [];
-  for (var i = 0; i < 3; i++){
-    for (var j = 0; j < 3; j++){
-      if (board[i][j].marker == "[ ]"){
-        if(board[i][j].category == 'corner'){
-          cornerChoices.push(board[i][j]);
-          allOptions.push(board[i][j]);
-        }
-        if(board[i][j].category == 'side'){
-          sideChoices.push(board[i][j]);
-          allOptions.push(board[i][j]);
-        }
-        if(board[i][j].category == 'center'){
-          centerChoice.push(board[i][j]);
-          allOptions.push(board[i][j]);
-        }
-      }
-    }
-  }
-}
 
 // Displays
 var showBoard = function(){
@@ -60,125 +40,386 @@ var showOptions = function(){
   console.log(positions);
 }
 
+var showWinMoves = function(){
+  console.log("Win move: ")
+  console.log(availableWinPositions)
+}
+
 // Move Logic
 var nextPlayerGo =function(player){
   player == "Computer" ? userMove() : computerMove();
 }
 
 var computerMove = function(){
+  var moveData = {marker: "", player: ""};
   var updateThis = function(){
     // Submit choice
     moveData.marker = " X ";
     moveData.player = "Computer";
+    checkForAvailableWinPosition();
     updateAll(moveData)
   }
-  var moveData ;
-  // Scenario 1st move: Choose a corner
+
+  var selectAnyAvailableCorner = function(){
+    return cornerChoices[Math.floor(Math.random() * cornerChoices.length)];
+  }
+
+  // Select killmove if exists for either player
+  checkForAvailableWinPosition = function(){
+    availableWinPositions = [];
+
+    for (var i = 0; i < 3; i++){
+      var mkr = " X ";
+      for (var j = 0; j < board[i].length; j++){
+
+        // horizontal detection
+        if(board[i][j - 1] && board[i][j + 1]){
+          if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j - 1].marker == "[ ]"){
+            board[i][j - 1].computerKillSpot = true;
+            availableWinPositions.push(board[i][j - 1])
+          }
+        }
+        if(board[i][j + 1] && board[i][j + 2]){
+          if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j + 2].marker == "[ ]"){
+            board[i][j + 2].computerKillSpot = true;
+            availableWinPositions.push(board[i][j + 2])
+          }
+        }
+        if(board[i][j - 1] && board[i][j + 1]){
+          if (board[i][j - 1].marker == mkr && board[i][j + 1].marker == mkr && board[i][j].marker == "[ ]"){
+            board[i][j].computerKillSpot = true;
+            availableWinPositions.push(board[i][j])
+          }
+        }
+        // vertical detection
+        //vert-mid
+        if(board[i - 1] && board[i + 1]){
+          if (board[i -1][j].marker == mkr && board[i + 1][j].marker == mkr && board[i][j].marker == "[ ]"){
+            board[i][j].computerKillSpot = true;
+            availableWinPositions.push(board[i][j])
+          }
+        }
+        //vert-bot
+        if(board[i + 1] && board[i + 2]){
+          if (board[i][j].marker == mkr && board[i + 1][j].marker == mkr && board[i + 2][j].marker == "[ ]"){
+            board[i + 2][j].computerKillSpot = true;
+            availableWinPositions.push(board[i + 2][j])
+          }
+        }
+        //vert-top
+        if(board[i - 1] && board[i + 1]){
+          if (board[i][j].marker == mkr && board[i + 1][j].marker == mkr && board[i - 1][j].marker == "[ ]"){
+            board[i - 1][j].computerKillSpot = true;
+            availableWinPositions.push(board[i - 1][j])
+          }
+        }
+
+
+        // diagonal detection
+        // start top left  mid-center
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i - 1][j - 1].marker == mkr && board[i + 1][j + 1].marker == mkr && board[i][j].marker == "[ ]"){
+            board[i][j].computerKillSpot = true;
+            availableWinPositions.push(board[i][j])
+          }
+        }
+        // start top left  top-left
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i][j].marker == mkr && board[i + 1][j + 1].marker == mkr && board[i - 1][j - 1].marker == "[ ]"){
+            board[i - 1][j - 1].computerKillSpot = true;
+            availableWinPositions.push(board[i - 1][j - 1])
+          }
+        }
+        // start top left  bot-right
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i - 1][j - 1].marker == mkr && board[i][j].marker == mkr && board[i + 1][j + 1].marker == "[ ]"){
+            board[i + 1][j + 1].computerKillSpot = true;
+            availableWinPositions.push(board[i + 1][j + 1])
+          }
+        }
+        // start top right  mid-center
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i - 1][j + 1].marker == mkr && board[i + 1][j - 1].marker == mkr && board[i][j].marker == "[ ]"){
+            board[i][j].computerKillSpot = true;
+            availableWinPositions.push(board[i][j])
+          }
+        }
+        // start top right  top-right
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i][j].marker == mkr && board[i + 1][j - 1].marker == mkr && board[i - 1][j + 1].marker == "[ ]"){
+            board[i - 1][j + 1].computerKillSpot = true;
+            availableWinPositions.push(board[i - 1][j + 1])
+          }
+        }
+        // start top right  bot-left
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i][j].marker == mkr && board[i - 1][j + 1].marker == mkr && board[i + 1][j - 1].marker == "[ ]"){
+            board[i + 1][j - 1].computerKillSpot = true;
+            availableWinPositions.push(board[i + 1][j - 1])
+          }
+        }
+      }
+    }
+// **************************************
+    for (var i = 0; i < 3; i++){
+      var mkr = " O ";
+      for (var j = 0; j < board[i].length; j++){
+        // horizontal detection
+        if(board[i][j - 1] && board[i][j + 1]){
+          if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j - 1].marker == "[ ]"){
+            board[i][j - 1].userKillSpot = true;
+            availableWinPositions.push(board[i][j - 1])
+          }
+        }
+        if(board[i][j + 1] && board[i][j + 2]){
+          if (board[i][j].marker == mkr && board[i][j + 1].marker == mkr && board[i][j + 2].marker == "[ ]"){
+            board[i][j + 2].userKillSpot = true;
+            availableWinPositions.push(board[i][j + 2])
+          }
+        }
+        if(board[i][j - 1] && board[i][j + 1]){
+          if (board[i][j - 1].marker == mkr && board[i][j + 1].marker == mkr && board[i][j].marker == "[ ]"){
+            board[i][j].userKillSpot = true;
+            availableWinPositions.push(board[i][j])
+          }
+        }
+        // vertical detection
+        //vert-mid
+        if(board[i - 1] && board[i + 1]){
+          if (board[i - 1][j].marker == mkr && board[i + 1][j].marker == mkr && board[i][j].marker == "[ ]"){
+            board[i][j].userKillSpot = true;
+            availableWinPositions.push(board[i][j])
+          }
+        }
+        //vert-bot
+        if(board[i + 1] && board[i + 2]){
+          if (board[i][j].marker == mkr && board[i + 1][j].marker == mkr && board[i + 2][j].marker == "[ ]"){
+            board[i + 2][j].userKillSpot = true;
+            availableWinPositions.push(board[i + 2][j])
+          }
+        }
+        //vert-top
+        if(board[i - 1] && board[i + 1]){
+          if (board[i][j].marker == mkr && board[i + 1][j].marker == mkr && board[i - 1][j].marker == "[ ]"){
+            board[i - 1][j].userKillSpot = true;
+            availableWinPositions.push(board[i - 1][j])
+          }
+        }
+        // diagonal detection
+        // start top left  mid-center
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i - 1][j - 1].marker == mkr && board[i + 1][j + 1].marker == mkr && board[i][j].marker == "[ ]"){
+            board[i][j].userKillSpot = true;
+            availableWinPositions.push(board[i][j])
+          }
+        }
+        // start top left  top-left
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i][j].marker == mkr && board[i + 1][j + 1].marker == mkr && board[i - 1][j - 1].marker == "[ ]"){
+            board[i - 1][j - 1].userKillSpot = true;
+            availableWinPositions.push(board[i - 1][j - 1])
+          }
+        }
+        // start top left  bot-right
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i - 1][j - 1].marker == mkr && board[i][j].marker == mkr && board[i + 1][j + 1].marker == "[ ]"){
+            board[i + 1][j +1].userKillSpot = true;
+            availableWinPositions.push(board[i + 1][j + 1])
+          }
+        }
+        // start top right  mid-center
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i - 1][j + 1].marker == mkr && board[i + 1][j - 1].marker == mkr && board[i][j].marker == "[ ]"){
+            board[i][j].userKillSpot = true;
+            availableWinPositions.push(board[i][j])
+          }
+        }
+        // start top right  top-right
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i][j].marker == mkr && board[i + 1][j - 1].marker == mkr && board[i - 1][j + 1].marker == "[ ]"){
+            board[i - 1][j + 1].userKillSpot = true;
+            availableWinPositions.push(board[i - 1][j + 1])
+          }
+        }
+        // start top right  bot-left
+        if(board[i - 1] && board[i + 1] && board[i - 1][j - 1] && board[i + 1][j + 1]){
+          if (board[i][j].marker == mkr && board[i - 1][j + 1].marker == mkr && board[i + 1][j - 1].marker == "[ ]"){
+            board[i + 1][j - 1].userKillSpot = true;
+            availableWinPositions.push(board[i + 1][j - 1])
+          }
+        }
+      }
+    }
+
+  }
+
+
+  // Scenario 1st move Computer: Choose a corner
   if(moveLog.length < 1){
-    moveData = cornerChoices[Math.floor(Math.random()* corners.length)];
+    moveData = cornerChoices[Math.floor(Math.random()* cornerChoices.length)];
     updateThis();
   }
   // Scenario 3rd move: 
-  if(moveLog.length == 2){
+  else if(moveLog[0].player == "Computer" && moveLog.length == 2){
     var move1 = moveLog[moveLog.length - 2];
     var move2 = moveLog[moveLog.length - 1];
-    var checkIf2ndMovecorner = function(){
-      for(var i = 0; i = cornerChoices.length; i ++){
-        var result = false;
-        var moveOptions = [];
-        if(move2.position == cornerChoices[i].position){
-          result = true;
-        }
-        return result;
-      }
-    }
-    // O moves center
-    if(move2.coords.i == 1 && move2.coords.j == 1 ){
-      // 1st top-left
+    var selectFarCorner = function(){
       if(move1.coords.i == 0 && move1.coords.j == 0){
         moveData = board[2][2];
       }
-      // 1st top-right
       if(move1.coords.i == 0 && move1.coords.j == 2){
         moveData = board[2][0];
       }
-      // 1st bot-right
       if(move1.coords.i == 2 && move1.coords.j == 2){
         moveData = board[0][0];
       }
-      // 1st bot-left
       if(move1.coords.i == 2 && move1.coords.j == 0){
         moveData = board[0][2];
       }
+    }
+    var ifSecondMoveFarCorner = function(){
+      if(move1.coords.i == 0 && move1.coords.j == 0 && move2.coords.i == 2 && move2.coords.j == 2){
+        moveData = selectAnyAvailableCorner();
+        secondMove = "farCorner";
+      }
+      if(move1.coords.i == 0 && move1.coords.j == 2 && move2.coords.i == 2 && move2.coords.j == 0){
+        moveData = selectAnyAvailableCorner();
+        secondMove = "farCorner";
+      }
+      if(move1.coords.i == 2 && move1.coords.j == 2 && move2.coords.i == 0 && move2.coords.j == 0){
+        moveData = selectAnyAvailableCorner();
+        secondMove = "farCorner";
+      }
+      if(move1.coords.i == 2 && move1.coords.j == 0 && move2.coords.i == 0 && move2.coords.j == 2){
+        moveData = selectAnyAvailableCorner();
+        secondMove = "farCorner";
+      }
+    }
+    var ifSecondMoveFarSides = function(){
+      if(secondMove !== "adjacent"){
+        sideChoices.forEach(function(side){
+          if(move2.position == side.position){
+            moveData = side;
+            secondMove = "farSide";  
+          }
+        })
+      }
+    }
+
+    // O moves center X moves to far corner
+    if(move2.position == "mid-center"){
+      secondMove = "center";
+      selectFarCorner();
       updateThis();
     }
     // Scenario move O moved to adjacent side of X
     // Scenario 1st top-left 2nd top-center
-    if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 0 && move2.coords.j == 1){
+    else if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 0 && move2.coords.j == 1){
       moveData = board[2][0];
+      secondMove = "adjacent";
       updateThis();
     }
     // Scenario 1st bot-right 2nd mid-right
     else if(move1.coords.i == 2 && move2.coords.i == 1 && move1.coords.j == 2 && move2.coords.j == 2){
+      secondMove = "adjacent";
       moveData = board[2][0];
       updateThis();
     }
     // Scenario 1st top-left 2nd mid-left
     else if(move1.coords.i == 0 && move2.coords.i == 1 && move1.coords.j == 0 && move2.coords.j == 0){
+      secondMove = "adjacent";
       moveData = board[0][2];
       updateThis();
     }
     // Scenario 1st bot-right 2nd bot-center
     else if(move1.coords.i == 2 && move2.coords.i == 2 && move1.coords.j == 2 && move2.coords.j == 1){
+      secondMove = "adjacent";
       moveData = board[0][2];
       updateThis();
     }
     // Scenario 1st bot-left 2nd bot-center
     else if(move1.coords.i == 2 && move2.coords.i  == 2 && move1.coords.j == 0 && move2.coords.j == 1){
+      secondMove = "adjacent";
       moveData = board[0][0];
       updateThis();
     }
     // Scenario 1st top-right 2nd mid-right
     else if(move1.coords.i == 0 && move2.coords.i == 1 && move1.coords.j == 2 && move2.coords.j == 2){
+      secondMove = "adjacent";
       moveData = board[0][0];
       updateThis();
     }
     // Scenario 1st bot-left 2nd mid-left
     else if(move1.coords.i == 2 && move2.coords.i  == 1 && move1.coords.j == 0 && move2.coords.j == 0){
+      secondMove = "adjacent";
       moveData = board[2][2];
       updateThis();
     }
     // Scenario 1st top-right 2nd top-center
     else if(move1.coords.i == 0 && move2.coords.i == 0 && move1.coords.j == 2 && move2.coords.j == 1){
+      secondMove = "adjacent";
       moveData = board[2][2];
       updateThis();
     }
-    // Scenarios 2nd move corner go to any available corner
-    else if(checkIf2ndMovecorner){
-      var moveOptions = [];
-      for(var i = 0; i < cornerChoices.length; i++){
-        console.log(move1.position)
-        console.log(move2.position)
-        console.log(cornerChoices[i])
-        if(move1.position !== cornerChoices[i].position && move2.position !== cornerChoices[i].position){
-          moveOptions.push(cornerChoices[i]);
-        }
+    // Scenarios 2nd move not center or adjacent go to any available corner
+    else {
+      ifSecondMoveFarCorner();
+      ifSecondMoveFarSides();
+      if(secondMove !== "center" && secondMove !== "adjacent" && secondMove !== "farCorner" && secondMove !== "farSide"){
+        secondMove = "nearCorner";
+        selectFarCorner();
       }
-      moveData = moveOptions[Math.floor(Math.random() * moveOptions.length)];
       updateThis();
     }
+  }
+   // Scenario 5th move:
+  else if(moveLog.length >= 4 ){
+    alert("4 or more moves")
+    checkForAvailableWinPosition();
+    if(availableWinPositions.length > 0){
+      var userWinData = {};
+      for (var i = 0; i < availableWinPositions.length; i++){
+        if(availableWinPositions[i].computerKillSpot = true){
+          moveData = availableWinPositions[i];
+          computerWon = true;
+        }
+        if(availableWinPositions[i].userKillSpot = true) {
+          userWinData = availableWinPositions[i];
+        }
+      }
+      if(computerWon == false){
+        moveData = userWinData;
+      }
+      updateThis();
+    }
+    // IF secondMove adjacent choose opposite corner
+    else if(secondMove == "adjacent"){
+      alert("secondMove was adjacent")
+      var move1 = moveLog[0];
+      if(move1.position == "top-right"){
+        moveData = board[2][0];
+      }
+      if(move1.position == "top-left"){
+        moveData = board[2][2];
+      }
+      if(move1.position == "bot-left"){
+        moveData = board[0][2];
+      }
+      if(move1.position == "bot-right"){
+        moveData = board[0][0];
+      }
+      updateThis();
+    }   
     else {
-      console.log("2nd move was not a side move")
+      console.log("move not coded")
     }
   }
-  // Scenario 5th move:
-  console.log("5th move not coded")
-
 
   
 }
 
 var userMove = function(){
+
   var moveData;
   var validMove = false;
   var position = prompt('Enter a position for your move');
@@ -216,18 +457,74 @@ var updateMoveLog = function(moveData){
   moveLog.push(lastPlayData);
 }
 
+
+var updateChoices = function(){
+  allOptions = [];
+  cornerChoices = [];
+  sideChoices = [];
+  centerChoice = [];
+  for (var i = 0; i < 3; i++){
+    for (var j = 0; j < 3; j++){
+      if (board[i][j].marker == "[ ]"){
+        if(board[i][j].category == 'corner'){
+          cornerChoices.push(board[i][j]);
+          allOptions.push(board[i][j]);
+        }
+        if(board[i][j].category == 'side'){
+          sideChoices.push(board[i][j]);
+          allOptions.push(board[i][j]);
+        }
+        if(board[i][j].category == 'center'){
+          centerChoice.push(board[i][j]);
+          allOptions.push(board[i][j]);
+        }
+      }
+    }
+  }
+}
+
 var updateAll = function(moveData){
   updateMoveLog(moveData);
-  console.log("\n");
-  console.log("Begin move #", moveLog.length);
-  console.log(moveLog[moveLog.length - 1].player + " chose " + moveLog[moveLog.length - 1].position);
-  console.log("Last play data: ", lastPlayData);
-  updateChoices();
-  showOptions();
-  console.log("\n");
-  showBoard();
+  console.log(moveLog)
 
-  allOptions.length > 0 ? nextPlayerGo(moveData.player) : console.log("Gameover...no more options")
+  if(!computerWon){
+
+    if(moveLog.length == 9){
+      console.log("\n");
+      console.log(moveLog[moveLog.length - 1].player + " chose " + moveLog[moveLog.length - 1].position);
+      showBoard();
+      console.log("No more moves available....Tie.");
+
+    } 
+    else{
+      console.log("\n");
+      console.log("Begin move #", moveLog.length);
+      console.log(moveLog[moveLog.length - 1].player + " chose " + moveLog[moveLog.length - 1].position);
+      console.log("Last play data: ", lastPlayData);
+      updateChoices();
+      showOptions();
+      checkForAvailableWinPosition();
+      showWinMoves();
+      console.log("\n");
+      showBoard();
+
+      allOptions.length > 0 ? nextPlayerGo(moveData.player) : console.log("Gameover...no more options")
+    }
+  }
+  else {
+    console.log("\n");
+    console.log("Begin move #", moveLog.length);
+    console.log(moveLog[moveLog.length - 1].player + " chose " + moveLog[moveLog.length - 1].position);
+    console.log(board);
+    console.log("Last play data: ", lastPlayData);
+    updateChoices();
+    showOptions();
+    checkForAvailableWinPosition();
+    showWinMoves();
+    console.log("\n");
+    showBoard();
+    console.log("Computer wins!!")
+  }
 }
 
 
