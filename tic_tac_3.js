@@ -102,16 +102,16 @@ var computerGo = function(){
         if(each.player == " O " && winSpotDetected == false){
           alert("O win spot detected", each.boardSpot.position)
           blockSpotDetected = true;
-          blackSpot = each.boardSpot;
+          blockSpot = each.boardSpot;
         }
       })
       if(winSpotDetected == false && blockSpotDetected == true){
-        moveData = blackSpot;
+        moveData = blockSpot;
       }
     }
   }
 
-  var blockOrWinAvailable = function(){
+  var checkIfBlockOrWinAvailable = function(){
     alert('inside block or win')
     var potential = {boardSpot:"", player:""};
     // Detect if win spot for User
@@ -249,13 +249,18 @@ var computerGo = function(){
   }
   // Computer goes 2nd move 
   else if(moveLog.length == 1){
-    // 1st was any corner
+    // First was any corner
     if(availableCorners.length == 3){
       selectAvailableCenter();
     }
-    // 1st was center
+    // First was center
     if(availableCenter.length == 0){
       selectAnyAvailableCorner();
+    }
+    // First was a side
+    if(availableSides.length) == 3){
+      var move1 = moveLog[0];
+      
     }
   }
   // Computer goes third move
@@ -282,18 +287,18 @@ var computerGo = function(){
       selectFarCorner();
     }
    // Second move was any far side
-    if(board[0][0].marker == " X " && board[1][2].marker == " O " || board[0][0].marker == " X " && board[2][1].marker == " O " || board[0][2].marker == " X " && board[1][0].marker == " O " || board[0][2].marker == " X " && board[2][1].marker == " O " || board[2][0].marker == " X " && board[0][1].marker == " O " || board[2][0].marker == " X " && board[1][2] == " O " || board[2][2].marker == " X " && board[0][1].marker == " O " || board[2][2].marker == " X " && board[1][0].marker == " O "){
+    if(board[0][0].marker == " X " && board[1][2].marker == " O " || board[0][0].marker == " X " && board[2][1].marker == " O " || board[0][2].marker == " X " && board[1][0].marker == " O " || board[0][2].marker == " X " && board[2][1].marker == " O " || board[2][0].marker == " X " && board[0][1].marker == " O " || board[2][0].marker == " X " && board[1][2].marker == " O " || board[2][2].marker == " X " && board[0][1].marker == " O " || board[2][2].marker == " X " && board[1][0].marker == " O "){
       selectFarCorner();
     }
     // Second move was any near corner
-    if(board[0][0].marker == " X " && board[0][2].marker == " O " || board[0][0].marker == " X " && board[2][0].marker == " O " || board[0][2].marker == " X " && board[2][2].marker == " O " || board[0][0].marker == " X " && board[2][1].marker == " O " || board[2][0].marker == " X " && board[0][0].marker == " O " || board[2][0].marker == " X " && board[2][2] == " O " || board[2][2].marker == " X " && board[0][2].marker == " O " || board[2][2].marker == " X " && board[2][0].marker == " O "){
+    if(board[0][0].marker == " X " && board[0][2].marker == " O " || board[0][0].marker == " X " && board[2][0].marker == " O " || board[0][2].marker == " X " && board[2][2].marker == " O " || board[0][2].marker == " X " && board[0][0].marker == " O " || board[2][0].marker == " X " && board[0][0].marker == " O " || board[2][0].marker == " X " && board[2][2].marker == " O " || board[2][2].marker == " X " && board[0][2].marker == " O " || board[2][2].marker == " X " && board[2][0].marker == " O "){
       selectFarCorner();
     }  
 
   }
   // All moves after 3rd
   else if(moveLog.length >= 3){
-    blockOrWinAvailable();
+    checkIfBlockOrWinAvailable();
     if(availableWinPositions.length > 0){
       console.log("availableWinPositions", availableWinPositions)
       selectBlockOrWin();
@@ -335,7 +340,7 @@ var checkForWin = function(){
   markers.forEach(function(mkr){
     for (var i = 0; i < 3; i++){
       for (var j = 0; j < 3; j++){
-        if(board[i - 1] && board[i + 1] && board[j - 1] && board[j + 1]){
+        if(board[i - 1] && board[i + 1] && board[i][j - 1] && board[i][j + 1]){
           if(board[i][j - 1].marker == mkr && board[i][j].marker == mkr && board[i][j + 1].marker == mkr || board[i - 1][j].marker == mkr && board[i][j].marker == mkr && board[i + 1][j].marker == mkr || board[i - 1][j -1].marker == mkr && board[i][j].marker == mkr && board[i + 1][j + 1].marker == mkr || board[i - 1][j + 1].marker == mkr && board[i][j].marker == mkr && board[i + 1][j - 1].marker == mkr){
             if(mkr == " X "){
               winDetected = true;
