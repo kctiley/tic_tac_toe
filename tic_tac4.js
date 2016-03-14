@@ -34,7 +34,7 @@ var updateBoard = function(lastPlayer){
     }
   })
   if(winner){
-    console.log("Winner");
+    console.log(winner);
   }
   else if (tie){
     console.log("Tie");
@@ -56,6 +56,65 @@ var computer = {
       boardPerim = newArr;
     }
 
+    var resetBoard = function(){
+      while(boardPerim[0].position !== "nwcorner"){
+        rotateBoard();
+      }
+    }
+
+    var availWinsUser = [];
+    var availWinsComputer = [];
+
+    var checkForBlockOrWin = function(){
+      var mrkrs = [" X ", " O "];
+      availWinsUser = [];
+      availWinsComputer = [];
+      for (var i = 0; i < 2; i++){
+        var mrkr = mrkrs[i];
+        if(availWinsComputer.length == 0){
+          // Perimeter win scenarios
+          // middle avail top row
+          if(boardPerim[0].marker == mrkr && boardPerim[1].marker == "[ ]" && boardPerim[2].marker == mrkr){
+            mrkr == " X " ?  availWinsComputer.push(boardPerim[1]) : availWinsUser.push(boardPerim[1]);
+          }
+          // nw avail top row
+          if(boardPerim[0].marker == "[ ]" && boardPerim[1].marker == mrkr && boardPerim[2].marker == mrkr){
+            mrkr == " X " ?  availWinsComputer.push(boardPerim[0]) : availWinsUser.push(boardPerim[0]);
+          }
+          // ne avail top row
+          if(boardPerim[0].marker == mrkr && boardPerim[1].marker == mrkr && boardPerim[2].marker == "[ ]"){
+            mrkr == " X " ?  availWinsComputer.push(boardPerim[2]) : availWinsUser.push(boardPerim[2]);
+          }
+          // Center row win scenarios
+          // middle avail center row
+          if(boardPerim[7].marker == mrkr && boardCenter.marker == "[ ]" && boardPerim[3].marker == mrkr){
+            mrkr == " X " ?  availWinsComputer.push(boardCenter) : availWinsUser.push(boardCenter);
+          }
+          // wside avail center row
+          if(boardPerim[7].marker == "[ ]" && boardCenter.marker == mrkr && boardPerim[3].marker == mrkr){
+            mrkr == " X " ?  availWinsComputer.push(boardPerim[7]) : availWinsUser.push(boardPerim[7]);
+          }
+          // eside avail center row
+          if(boardPerim[7].marker == mrkr && boardCenter.marker == mrkr && boardPerim[3].marker == "[ ]"){
+            mrkr == " X " ?  availWinsComputer.push(boardPerim[3]) : availWinsUser.push(boardPerim[3]);
+          }
+          // Diagonal scenarios
+          // center avail
+          if(boardPerim[0].marker == mrkr && boardCenter.marker == "[ ]" && boardPerim[4].marker == mrkr){
+            mrkr == " X " ?  availWinsComputer.push(boardCenter) : availWinsUser.push(boardCenter);
+          }
+          // ne avail
+          if(boardPerim[0].marker == "[ ]" && boardCenter.marker == mrkr && boardPerim[4].marker == mrkr){
+            mrkr == " X " ?  availWinsComputer.push(boardPerim[0]) : availWinsUser.push(boardPerim[0]);
+          }
+          // se avail
+          if(boardPerim[0].marker == mrkr && boardCenter.marker == mrkr && boardPerim[4].marker == "[ ]"){
+            mrkr == " X " ?  availWinsComputer.push(boardPerim[4]) : availWinsUser.push(boardPerim[4]);
+          }
+        }
+      }
+    }// End checkForBlockOrWin
+
     console.log("Computer move...");
     if (moveCount == 0){
       boardPerim[0].marker = " X ";
@@ -67,7 +126,6 @@ var computer = {
       // Rotate board 3 times to check for match and rotate 1 more time to reset to original position
       for (var i = 0; i < 5; i++){
         if(i > 0){rotateBoard();}
-        showBoard();
         // Scenario 2nd move was center
         if(boardPerim[0].marker == " X " && boardCenter.marker == " O "){
           boardPerim[4].marker = " X ";
@@ -94,7 +152,78 @@ var computer = {
           break;
         }
       }
+      resetBoard();
+      updateBoard("Computer");
+    }
+    else if (moveCount == 4){
+      console.log("In computer 5th move");
+      // Rotate board 3 times to check for match and rotate 1 more time to reset to original position
+      for (var i = 0; i < 5; i++){
+        if(i > 0){rotateBoard();}
+        checkForBlockOrWin();
+        // Go for win
+        if(availWinsComputer.length > 0){
+          
+          availWinsComputer[0].marker = " X ";
+          winner = "Computer wins!";
+          break;
+        }
+        // Go for block
+        // Block also covers scenario move 2 was center and any 4th move would be block
+        // Block or Win also covers scenario move 2 was near corner since next move will either be win or block
+        else if(availWinsUser.length > 0 && availWinsComputer.length == 0){
+          availWinsUser[0].marker = " X ";
+          break;
+        }
+        else {
+          // Scenario moves 2 and 4 were side moves
+          if(boardPerim[2].marker == " X " && boardPerim[1].marker == " O " && boardPerim[3].marker == " O "){
+            boardPerim[6].marker = " X ";
+            break;
+          }
+          // Scenario move 2 far side and move 4 center
+          if(boardPerim[0].marker == " X " && boardPerim[3].marker == " O " && boardCenter.marker == " O "){
+            boardPerim[6].marker = " X ";
+            break;
+          }
+          if(boardPerim[0].marker == " X " && boardPerim[5].marker == " O " && boardCenter.marker == " O "){
+            boardPerim[2].marker = " X ";
+            break;
+          }
+          // Scenario 2nd move was far corner
+          if(boardPerim[0].marker == " X " && boardPerim[4].marker == " O " && boardPerim[7] == " O "){
+            boardPerim[2].marker = " X ";
+            break;
+          }
+          if(boardPerim[0].marker == " X " && boardPerim[4].marker == " O " && boardPerim[1] == " O "){
+            boardPerim[6].marker = " X ";
+            break;
+          }
+        }
 
+      }
+      resetBoard();
+      updateBoard("Computer");
+    }
+    else if (moveCount > 4){
+      console.log("In computer move 7 or more")
+      // Rotate board 3 times to check for match and rotate 1 more time to reset to original position
+      for (var i = 0; i < 5; i++){
+        if(i > 0){rotateBoard();}
+        checkForBlockOrWin();
+        // Go for win
+        if(availWinsComputer.length > 0){
+          availWinsComputer[0].marker = " X ";
+          winner = "Computer wins";
+          break;
+        }
+        // Go for block
+        if(availWinsUser.length > 0 && availWinsComputer.length == 0){
+          availWinsUser[0].marker = " X ";
+          break;
+        }
+      }
+      resetBoard();
       updateBoard("Computer");
     }
     else {
