@@ -1,11 +1,11 @@
-var board = [ {position: "nwcorner", marker: "[ ]"},
-              {position: "nside", marker: "[ ]"},
-              {position: "necorner", marker: "[ ]"},
-              {position: "eside", marker: "[ ]"},
-              {position: "secorner", marker: "[ ]"},
-              {position: "sside", marker: "[ ]"},
-              {position: "swcorner", marker: "[ ]"},
-              {position: "wside", marker: "[ ]"},
+var board = [ {position: "topLeft", marker: "[ ]"},
+              {position: "topCenter", marker: "[ ]"},
+              {position: "topRight", marker: "[ ]"},
+              {position: "middleRight", marker: "[ ]"},
+              {position: "bottomRight", marker: "[ ]"},
+              {position: "bottomCenter", marker: "[ ]"},
+              {position: "bottomLeft", marker: "[ ]"},
+              {position: "middleCenter", marker: "[ ]"},
               {position: "center", marker: "[ ]" }
 ];
 
@@ -22,7 +22,7 @@ var rotateBoard = function(){
 }
 
 var resetBoard = function(){
-  while(board[0].position !== "nwcorner"){
+  while(board[0].position !== "topLeft"){
     rotateBoard();
   }
 }
