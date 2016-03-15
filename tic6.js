@@ -33,6 +33,13 @@ var showBoard = function(){
   console.log(board[7].marker, board[8].marker, board[3].marker);
   console.log(board[6].marker, board[5].marker, board[4].marker);
   console.log("***********");
+
+  for(var i = 0; i < board.length; i++){
+    if(board[i].marker !== "[ ]"){
+      var element = document.getElementById("" + i + "");
+      element.innerHTML(board[i].marker)
+    }
+  }
 }
 
 var updateBoard = function(lastPlayer){
