@@ -397,3 +397,54 @@ displayBoard()
 console.log('Computer will move first...Move 1')
 computerSelectPosition()
 
+
+
+
+
+
+// if(boardPerim[0].marker == mrkr && boardPerim[1].marker == "[ ]" && boardPerim[2].marker == mrkr){
+//             mrkr == " X " ?  availWinsComputer.push(boardPerim[1]) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardPerim[1]) : null;
+//           }
+//           // nw avail top row
+//           if(boardPerim[0].marker == "[ ]" && boardPerim[1].marker == mrkr && boardPerim[2].marker == mrkr){
+//             mrkr == " X " ?  availWinsComputer.push(boardPerim[0]) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardPerim[0]) : null;
+//           }
+//           // ne avail top row
+//           if(boardPerim[0].marker == mrkr && boardPerim[1].marker == mrkr && boardPerim[2].marker == "[ ]"){
+//             mrkr == " X " ?  availWinsComputer.push(boardPerim[2]) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardPerim[2]) : null;
+//           }
+//           // Center row win scenarios
+//           // middle avail center row
+//           if(boardPerim[7].marker == mrkr && boardCenter.marker == "[ ]" && boardPerim[3].marker == mrkr){
+//             mrkr == " X " ?  availWinsComputer.push(boardCenter) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardCenter) : null;
+//           }
+//           // wside avail center row
+//           if(boardPerim[7].marker == "[ ]" && boardCenter.marker == mrkr && boardPerim[3].marker == mrkr){
+//             mrkr == " X " ?  availWinsComputer.push(boardPerim[7]) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardPerim[7]) : null;
+//           }
+//           // eside avail center row
+//           if(boardPerim[7].marker == mrkr && boardCenter.marker == mrkr && boardPerim[3].marker == "[ ]"){
+//             mrkr == " X " ?  availWinsComputer.push(boardPerim[3]) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardPerim[3]) : null;
+//           }
+//           // Diagonal scenarios
+//           // center avail
+//           if(boardPerim[0].marker == mrkr && boardCenter.marker == "[ ]" && boardPerim[4].marker == mrkr){
+//             mrkr == " X " ?  availWinsComputer.push(boardCenter) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardCenter) : null;
+//           }
+//           // ne avail
+//           if(boardPerim[0].marker == "[ ]" && boardCenter.marker == mrkr && boardPerim[4].marker == mrkr){
+//             mrkr == " X " ?  availWinsComputer.push(boardPerim[0]) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardPerim[0]) : null;
+//           }
+//           // se avail
+//           if(boardPerim[0].marker == mrkr && boardCenter.marker == mrkr && boardPerim[4].marker == "[ ]"){
+//             mrkr == " X " ?  availWinsComputer.push(boardPerim[4]) : null;
+//             mrkr == " O " ?  availWinsUser.push(boardPerim[4]) : null;
+//           }

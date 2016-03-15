@@ -8,9 +8,12 @@ var boardPerim = [ {position: "nwcorner", marker: "[ ]"},
               {position: "wside", marker: "[ ]"},
 ]
 var boardCenter = {position: "center", marker: "[ ]" };
+var boardAll = boardPerim;
+boardAll.push(boardCenter);
 
 var winner = false;
 var moveCount = -1;
+var availPositions;
 
 var showBoard = function(){
   console.log("**************");
@@ -25,12 +28,16 @@ var updateBoard = function(lastPlayer){
   console.log("Move count: " + moveCount);
   console.log("Updating board...");
   showBoard();
-  var boardAll = boardPerim;
-  boardAll.push(boardCenter);
   var tie = true;
+  availPositions = [];
   boardAll.forEach(function(boardSlot){
     if(boardSlot.marker == "[ ]"){
       tie = false;
+      availPositions.push(boardSlot.position);
+      console.log("boardPerim",boardPerim)
+      console.log("boardCenter",boardCenter)
+      console.log("boardAll",boardAll)
+      console.log("boardSlot",boardSlot)
     }
   })
   if(winner){
@@ -64,52 +71,63 @@ var computer = {
 
     var availWinsUser = [];
     var availWinsComputer = [];
+    var resetAvailWinsToEmptyArray = function(){
+      availWinsUser = [];
+      availWinsComputer = [];
+    }
 
     var checkForBlockOrWin = function(){
       var mrkrs = [" X ", " O "];
-      availWinsUser = [];
-      availWinsComputer = [];
       for (var i = 0; i < 2; i++){
         var mrkr = mrkrs[i];
         if(availWinsComputer.length == 0){
           // Perimeter win scenarios
           // middle avail top row
           if(boardPerim[0].marker == mrkr && boardPerim[1].marker == "[ ]" && boardPerim[2].marker == mrkr){
-            mrkr == " X " ?  availWinsComputer.push(boardPerim[1]) : availWinsUser.push(boardPerim[1]);
+            if(mrkr == " X "){availWinsComputer.push(boardPerim[1]); }
+            if(mrkr == " O "){availWinsUser.push(boardPerim[1]); }
           }
           // nw avail top row
           if(boardPerim[0].marker == "[ ]" && boardPerim[1].marker == mrkr && boardPerim[2].marker == mrkr){
-            mrkr == " X " ?  availWinsComputer.push(boardPerim[0]) : availWinsUser.push(boardPerim[0]);
+            if(mrkr == " X "){availWinsComputer.push(boardPerim[0]); }
+            if(mrkr == " O "){availWinsUser.push(boardPerim[0]); }
           }
           // ne avail top row
           if(boardPerim[0].marker == mrkr && boardPerim[1].marker == mrkr && boardPerim[2].marker == "[ ]"){
-            mrkr == " X " ?  availWinsComputer.push(boardPerim[2]) : availWinsUser.push(boardPerim[2]);
+            if(mrkr == " X "){availWinsComputer.push(boardPerim[2]); }
+            if(mrkr == " O "){availWinsUser.push(boardPerim[2]); }
           }
           // Center row win scenarios
           // middle avail center row
           if(boardPerim[7].marker == mrkr && boardCenter.marker == "[ ]" && boardPerim[3].marker == mrkr){
-            mrkr == " X " ?  availWinsComputer.push(boardCenter) : availWinsUser.push(boardCenter);
+            if(mrkr == " X "){availWinsComputer.push(boardCenter);}
+            if(mrkr == " O "){availWinsUser.push(boardCenter)}
           }
           // wside avail center row
           if(boardPerim[7].marker == "[ ]" && boardCenter.marker == mrkr && boardPerim[3].marker == mrkr){
-            mrkr == " X " ?  availWinsComputer.push(boardPerim[7]) : availWinsUser.push(boardPerim[7]);
+            if(mrkr == " X "){availWinsComputer.push(boardPerim[7]);}
+            if(mrkr == " O "){availWinsUser.push(boardPerim[7]);}
           }
           // eside avail center row
           if(boardPerim[7].marker == mrkr && boardCenter.marker == mrkr && boardPerim[3].marker == "[ ]"){
-            mrkr == " X " ?  availWinsComputer.push(boardPerim[3]) : availWinsUser.push(boardPerim[3]);
+            if(mrkr == " X "){availWinsComputer.push(boardPerim[3]);}
+            if(mrkr == " O "){availWinsUser.push(boardPerim[3]);}
           }
           // Diagonal scenarios
           // center avail
           if(boardPerim[0].marker == mrkr && boardCenter.marker == "[ ]" && boardPerim[4].marker == mrkr){
-            mrkr == " X " ?  availWinsComputer.push(boardCenter) : availWinsUser.push(boardCenter);
+            if(mrkr == " X "){availWinsComputer.push(boardCenter);}
+            if(mrkr == " O "){availWinsUser.push(boardCenter);}
           }
           // ne avail
           if(boardPerim[0].marker == "[ ]" && boardCenter.marker == mrkr && boardPerim[4].marker == mrkr){
-            mrkr == " X " ?  availWinsComputer.push(boardPerim[0]) : availWinsUser.push(boardPerim[0]);
+            if(mrkr == " X "){availWinsComputer.push(boardPerim[0]);}
+            if(mrkr == " O "){availWinsUser.push(boardPerim[0]);}
           }
           // se avail
           if(boardPerim[0].marker == mrkr && boardCenter.marker == mrkr && boardPerim[4].marker == "[ ]"){
-            mrkr == " X " ?  availWinsComputer.push(boardPerim[4]) : availWinsUser.push(boardPerim[4]);
+            if(mrkr == " X "){availWinsComputer.push(boardPerim[4]);}
+            if(mrkr == " O "){availWinsUser.push(boardPerim[4]);}
           }
         }
       }
@@ -118,7 +136,7 @@ var computer = {
     console.log("Computer move...");
     if (moveCount == 0){
       boardPerim[0].marker = " X ";
-      // or go to boardPerim[6].marker = " X " or 2 or 4
+      // or go to boardPerim[6].marker = " X " or 2 or 4 for random ux
       updateBoard("Computer");
     }
     else if (moveCount == 2){
@@ -140,20 +158,29 @@ var computer = {
           boardPerim[4].marker = " X ";
           break;
         }
-        // Scenario 2nd move was a far side or a close corner
-        if(boardPerim[0].marker == " X " && (boardPerim[3].marker == " O " || boardPerim[5].marker == " O " || boardPerim[2].marker == " O " || boardPerim[6].marker == " O ")){
+        // Scenario 2nd move was close corner
+        if(boardPerim[0].marker == " X " && (boardPerim[2].marker == " O " || boardPerim[6].marker == " O ")){
           boardPerim[4].marker = " X ";
           break;
         }
-        // Scenario 2nd move was a far corner
+        // Scenario 2nd move was far side
+        if(boardPerim[0].marker == " X " && boardPerim[3].marker == " O "){
+          boardPerim[6].marker = " X ";
+          break;
+        }
+        if(boardPerim[0].marker == " X " && boardPerim[5].marker == " O "){
+          boardPerim[2].marker = " X ";
+          break;
+        }
+        // Scenario 2nd move was a far corner. This scenario could be included with 2nd move far side scenario IF NOT doing random ux
         if(boardPerim[0].marker == " X " && boardPerim[4].marker == " O "){
           boardPerim[2].marker = " X ";
-          // or go to boardPerim[6].marker = " X "
+          // or go to boardPerim[6].marker = " X " for random ux
           break;
         }
       }
-      resetBoard();
-      updateBoard("Computer");
+      // resetBoard();
+      // updateBoard("Computer");
     }
     else if (moveCount == 4){
       console.log("In computer 5th move");
@@ -161,21 +188,21 @@ var computer = {
       for (var i = 0; i < 5; i++){
         if(i > 0){rotateBoard();}
         checkForBlockOrWin();
-        // Go for win
-        if(availWinsComputer.length > 0){
-          
-          availWinsComputer[0].marker = " X ";
-          winner = "Computer wins!";
-          break;
-        }
-        // Go for block
-        // Block also covers scenario move 2 was center and any 4th move would be block
-        // Block or Win also covers scenario move 2 was near corner since next move will either be win or block
-        else if(availWinsUser.length > 0 && availWinsComputer.length == 0){
-          availWinsUser[0].marker = " X ";
-          break;
-        }
-        else {
+      }  
+      // Block or Win also covers scenario move 2 was near corner since next move will either be win or block
+      // Go for win
+      if(availWinsComputer.length > 0){
+        availWinsComputer[0].marker = " X ";
+        winner = "Computer wins!";
+      }
+      // Go for block
+      // Block also covers scenario move 2 was center and any 4th move would be block
+      else if(availWinsUser.length > 0){
+        availWinsUser[0].marker = " X ";
+      }
+      else {
+        for (var i = 0; i < 5; i++){
+          if(i > 0){rotateBoard();}
           // Scenario moves 2 and 4 were side moves
           if(boardPerim[2].marker == " X " && boardPerim[1].marker == " O " && boardPerim[3].marker == " O "){
             boardPerim[6].marker = " X ";
@@ -200,10 +227,10 @@ var computer = {
             break;
           }
         }
-
       }
-      resetBoard();
-      updateBoard("Computer");
+      // resetAvailWinsToEmptyArray();
+      // resetBoard();
+      // updateBoard("Computer");
     }
     else if (moveCount > 4){
       console.log("In computer move 7 or more")
@@ -211,44 +238,71 @@ var computer = {
       for (var i = 0; i < 5; i++){
         if(i > 0){rotateBoard();}
         checkForBlockOrWin();
-        // Go for win
-        if(availWinsComputer.length > 0){
-          availWinsComputer[0].marker = " X ";
-          winner = "Computer wins";
-          break;
-        }
-        // Go for block
-        if(availWinsUser.length > 0 && availWinsComputer.length == 0){
-          availWinsUser[0].marker = " X ";
-          break;
-        }
+      }  
+      // Go for win
+      if(availWinsComputer.length > 0){
+        availWinsComputer[0].marker = " X ";
+        winner = "Computer wins";
       }
-      resetBoard();
-      updateBoard("Computer");
+      // Go for block if win not avail
+      else if(availWinsUser.length > 0){  
+        availWinsUser[0].marker = " X ";
+      }
+      else {
+        console.log("In moveCount > 4 ...scenario not coded")
+      }
+      // resetAvailWinsToEmptyArray();
+      // resetBoard();
+      // updateBoard("Computer");
     }
     else {
       console.log("Scenario not coded yet")
     }
+    resetAvailWinsToEmptyArray();
+    resetBoard();
+    updateBoard("Computer");
   },
-
 }
+
+// var user = {
+//   move : function(){
+//     console.log("User move...");
+//     console.log("Select from available positions: ", availPositions.join(', '))
+//     var position = prompt('User enter position ');
+//     var moveValid = false;
+//     for (var i = 0; i < boardPerim.length; i++){
+//       if(position == boardPerim[i].position && boardPerim[i].marker == "[ ]"){
+//         boardPerim[i].marker = " O ";
+//         moveValid = true;
+//         console.log("User move: " + boardPerim[i].position);
+//         updateBoard("User");
+//       }
+//       if(position == boardCenter.position && boardCenter.marker == "[ ]"){
+//         boardCenter.marker = " O ";
+//         moveValid = true;
+//         console.log("User move: " + boardCenter.position);
+//         updateBoard("User");
+//       }
+//     }
+//     if(moveValid == false){
+//       var continueGame = prompt("Invalid move. Continue y or n?");
+//       if(continueGame == "y"){
+//         user.move();
+//       }
+//     }
+//   }
+// }
 
 var user = {
   move : function(){
     console.log("User move...");
-    var position = prompt('User enter position ');
+    var position = prompt("Select from available positions: " + availPositions.join(', '));
     var moveValid = false;
-    for (var i = 0; i < boardPerim.length; i++){
-      if(position == boardPerim[i].position && boardPerim[i].marker == "[ ]"){
-        boardPerim[i].marker = " O ";
+    for (var i = 0; i < boardAll.length; i++){
+      if(position == boardAll[i].position && boardAll[i].marker == "[ ]"){
+        boardAll[i].marker = " O ";
         moveValid = true;
         console.log("User move: " + boardPerim[i].position);
-        updateBoard("User");
-      }
-      if(position == boardCenter.position && boardCenter.marker == "[ ]"){
-        boardCenter.marker = " O ";
-        moveValid = true;
-        console.log("User move: " + boardCenter.position);
         updateBoard("User");
       }
     }
