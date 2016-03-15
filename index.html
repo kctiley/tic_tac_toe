@@ -24,11 +24,15 @@
   }
 
   .controls {
+    display: block;
+    width: 100%;
     margin-top: 0;
-    margin-left: 45%;
+    /*margin-left: 45%;*/
+    text-align: center;
   }
 
   .game-button {
+    display: inline-block;
     background-color: gray;
     color: white;
     width: 5em;
@@ -44,12 +48,13 @@
   .alerts {
     width: 100%;
     position: absolute;
-    margin-top: -50vh;
+    /*margin-top: -50vh;*/
     text-align: center;
   }
 
   #win-message, #tie-message {
     display: none;
+    font-size: 46px;
   }
 
 </style>
@@ -98,7 +103,7 @@
       document.getElementById('win-message').style.display = "none";
       document.getElementById('board-container').style.opacity = 1;
       document.getElementById('tie-message').style.display = "none";
-      document.getElementById('start-button').style.display = "block";
+      document.getElementById('start-button').style.display = "inline-block";
       document.getElementById('reset-button').style.display = "none";
     }
 
@@ -153,12 +158,12 @@
       })
       if(winner){
         document.getElementById('win-message').style.display = "block";
-        document.getElementById('board-container').style.opacity = .25;
+        document.getElementById('board-container').style.opacity = .15;
         gameActive = false;
       }
       else if (availPositions.length == 0){
         document.getElementById('tie-message').style.display = "block";
-        document.getElementById('board-container').style.opacity = .25;
+        document.getElementById('board-container').style.opacity = .15;
         gameActive = false;
       }
       else {
@@ -220,8 +225,12 @@
       // Begin Computer check for scenarios
       console.log("Computer move...");
       if (moveCount == 0){
-        board[0].marker = " X ";
-        // or go to board[6].marker = " X " or 2 or 4 for random ux
+        // Select 
+        var cornerIndexArray = [0, 2, 4, 6]
+        var indexRandom = cornerIndexArray[Math.floor(Math.random() * 4)];
+        console.log("indexRandom", indexRandom)
+        var boardSlot = board[indexRandom];
+        boardSlot.marker = " X ";
       }
       else if (moveCount == 2){
         console.log("In computer 3rd move");
@@ -253,8 +262,12 @@
             }
             // Scenario 2nd move was a far corner. This scenario could be included with 2nd move far side scenario IF NOT doing random ux
             if(board[0].marker == " X " && board[4].marker == " O "){
-              board[2].marker = " X ";
+              //board[2].marker = " X ";
               // or go to board[6].marker = " X " for random ux
+              var cornerIndexArray = [2, 6];
+              var randomIndex = cornerIndexArray[Math.floor(Math.random() * 2)]
+              var boardSlot = board[randomIndex];
+              boardSlot.marker = " X ";
               break;
             }
           }
@@ -281,7 +294,9 @@
         else {
           for (var i = 0; i < 5; i++){
             if(i > 0){rotateBoard();}
+            console.log(i)
             if(board[0].marker == " X "){
+              console.log(board[0].marker,board[1].marker,board[2].marker,board[3].marker,board[4].marker,board[5].marker,board[6].marker,board[7].marker)
               // Scenario moves 2 and 4 were side moves
               if(board[1].marker == " O " && board[7].marker == " O "){board[4].marker = " X ";
                 break;
@@ -294,10 +309,12 @@
                 break;
               }
               // Scenario 2nd move was far corner
-              if(board[4].marker == " O " && board[7] == " O "){board[2].marker = " X ";
+              if(board[1].marker == " O " && board[4].marker == " O " && board[2].marker == " X "){board[6].marker = " X ";
+              console.log('a!!!!')
                 break;
               }
-              if(board[4].marker == " O " && board[1] == " O "){board[6].marker = " X ";
+              if(board[1].marker == " O " && board[6].marker == " O " && board[2].marker == " X "){board[4].marker = " X ";
+              console.log('b!!!!')
                 break;
               }
             }
@@ -365,7 +382,7 @@
 
     var startGame = function(){
       document.getElementById('start-button').style.display = "none";
-      document.getElementById('reset-button').style.display = "block";
+      document.getElementById('reset-button').style.display = "inline-block";
       gameActive = true;
       updateBoard()
     }
